@@ -251,11 +251,14 @@ NAN_METHOD(Paragraph::New) {
   // as we're alive.
   para->text = new UChar[plen + tlen + elen];
 
-  CREATE_ISOLATE;
+  // CREATE_ISOLATE;
 
-  WRITE(prologue, para->text, 0, plen);
-  WRITE(text, para->text + plen, 0, tlen);
-  WRITE(epilogue, para->text + plen + tlen, 0, elen);
+  // WRITE(prologue, para->text, 0, plen);
+  // WRITE(text, para->text + plen, 0, tlen);
+  // WRITE(epilogue, para->text + plen + tlen, 0, elen);
+  prologue->Write(para->text, 0, plen);
+  text->Write(para->text + plen, 0, tlen);
+  epilogue->Write(para->text + plen + tlen, 0, elen);
   if (plen!=0 || elen!=0) {
     ubidi_setContext(
       para->para, para->text, plen,
