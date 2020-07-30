@@ -250,9 +250,12 @@ NAN_METHOD(Paragraph::New) {
   // Copy main, prologue, and epilogue text and keep it alive as long
   // as we're alive.
   para->text = new UChar[plen + tlen + elen];
-  prologue->Write(para->text, 0, plen);
-  text->Write(para->text + plen, 0, tlen);
-  epilogue->Write(para->text + plen + tlen, 0, elen);
+
+  CREATE_ISOLATE;
+
+  WRITE(prologue, para->text, 0, plen);
+  WRITE(text, para->text + plen, 0, tlen);
+  WRITE(epilogue, para->text + plen + tlen, 0, elen);
   if (plen!=0 || elen!=0) {
     ubidi_setContext(
       para->para, para->text, plen,
@@ -496,7 +499,7 @@ NAN_MODULE_INIT(RegisterModule) {
 
   // Reordered.<constant>: option bits for writeReordered
   Local<Object> re = Nan::New<Object>();
-  Nan::ForceSet(target, NEW_STR("Reordered"), re,
+  Nan::DefineOwnProperty(target, NEW_STR("Reordered"), re,
                     static_cast<PropertyAttribute>(ReadOnly | DontDelete));
   DEFINE_CONSTANT_INTEGER(re, UBIDI_KEEP_BASE_COMBINING, KEEP_BASE_COMBINING);
   DEFINE_CONSTANT_INTEGER(re, UBIDI_DO_MIRRORING, DO_MIRRORING);
@@ -506,7 +509,7 @@ NAN_MODULE_INIT(RegisterModule) {
 
   // ReorderingMode.<constant>
   Local<Object> rm = Nan::New<Object>();
-  Nan::ForceSet(target, NEW_STR("ReorderingMode"), rm,
+  Nan::DefineOwnProperty(target, NEW_STR("ReorderingMode"), rm,
                     static_cast<PropertyAttribute>(ReadOnly | DontDelete));
   DEFINE_CONSTANT_INTEGER(rm, UBIDI_REORDER_DEFAULT, DEFAULT);
   DEFINE_CONSTANT_INTEGER(rm, UBIDI_REORDER_NUMBERS_SPECIAL, NUMBERS_SPECIAL);
@@ -518,7 +521,7 @@ NAN_MODULE_INIT(RegisterModule) {
   //DEFINE_CONSTANT_INTEGER(rm, UBIDI_REORDER_COUNT, COUNT); //number of enums
 
   Local<Object> ro = Nan::New<Object>();
-  Nan::ForceSet(target, NEW_STR("ReorderingOption"), ro,
+  Nan::DefineOwnProperty(target, NEW_STR("ReorderingOption"), ro,
                     static_cast<PropertyAttribute>(ReadOnly | DontDelete));
   DEFINE_CONSTANT_INTEGER(ro, UBIDI_OPTION_DEFAULT, DEFAULT);
   DEFINE_CONSTANT_INTEGER(ro, UBIDI_OPTION_INSERT_MARKS, INSERT_MARKS);

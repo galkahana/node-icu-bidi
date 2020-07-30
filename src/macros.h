@@ -48,14 +48,14 @@
     }
 
 #define DEFINE_CONSTANT_INTEGER(target, constant, name)                        \
-    Nan::ForceSet((target),                                                    \
+    Nan::DefineOwnProperty((target),                                           \
         NEW_STR(#name),                                                        \
         Nan::New<Integer>(constant),                                           \
         static_cast<PropertyAttribute>(ReadOnly | DontDelete)                  \
     );
 
 #define DEFINE_CONSTANT_STRING(target, constant, name)                         \
-    Nan::ForceSet((target),                                                    \
+    Nan::DefineOwnProperty((target),                                            \
         NEW_STR(#name),                                                        \
         Nan::New<String>(constant).ToLocalChecked(),                           \
         static_cast<PropertyAttribute>(ReadOnly | DontDelete)                  \
@@ -81,5 +81,8 @@ static NAN_INLINE v8::Local<v8::String> CAST_STRING(v8::Local<v8::Value> v, v8::
     Nan::EscapableHandleScope scope;
     return scope.Escape(v->IsString() ? Nan::To<v8::String>(v).FromMaybe(defaultValue) : defaultValue);
 }
+
+#define CREATE_ISOLATE v8::Isolate *isolate = v8::Isolate::GetCurrent()
+#define WRITE(obj, text, offset, length) obj->Write(isolate, text, offset, length)
 
 #endif
